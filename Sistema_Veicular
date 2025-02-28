@@ -1,0 +1,146 @@
+// Classe Main para testar as implementações
+public class Main {
+    public static void main(String[] args) {
+        // Criando instâncias de veículos
+        Carro carro = new Carro("Toyota", "Corolla", 2023, 5, "Gasolina", "Sedan");
+        Caminhao caminhao = new Caminhao("Mercedes", "Actros", 2022, 2, "Diesel", 5);
+        Onibus onibus = new Onibus("Volvo", "B12", 2021, 50, "Diesel", 7);
+        CarroEletrico carroEletrico = new CarroEletrico("Tesla", "Model 3", 2023, 5, "Elétrico", "Sedan", 60);
+        CaminhaoRefrigerado caminhaoRefrigerado = new CaminhaoRefrigerado("Scania", "P 400", 2022, 2, "Diesel", 10, -5);
+
+        // Exibindo detalhes dos veículos e calculando autonomias
+        Veiculo[] veiculos = {carro, caminhao, onibus, carroEletrico, caminhaoRefrigerado};
+        for (Veiculo veiculo : veiculos) {
+            veiculo.exibirDetalhes();
+            System.out.println("Autonomia: " + veiculo.calcularAutonomia() + " km\n");
+        }
+    }
+}
+
+// Classe abstrata Veiculo
+public abstract class Veiculo {
+    protected String marca;
+    protected String modelo;
+    protected int ano;
+    protected int capacidadePassageiros;
+    protected String combustivel;
+
+    // Construtor
+    public Veiculo(String marca, String modelo, int ano, int capacidadePassageiros, String combustivel) {
+        this.marca = marca;
+        this.modelo = modelo;
+        this.ano = ano;
+        this.capacidadePassageiros = capacidadePassageiros;
+        this.combustivel = combustivel;
+    }
+
+    // Método abstrato
+    public abstract double calcularAutonomia();
+
+    // Método concreto
+    public void exibirDetalhes() {
+        System.out.println("Marca: " + marca);
+        System.out.println("Modelo: " + modelo);
+        System.out.println("Ano: " + ano);
+        System.out.println("Capacidade de Passageiros: " + capacidadePassageiros);
+        System.out.println("Combustível: " + combustivel);
+    }
+}
+
+// Classe Carro (herda de Veiculo)
+public class Carro extends Veiculo {
+    private String tipoCarro; // sedan, hatch, SUV
+
+    // Construtor
+    public Carro(String marca, String modelo, int ano, int capacidadePassageiros, String combustivel, String tipoCarro) {
+        super(marca, modelo, ano, capacidadePassageiros, combustivel);
+        this.tipoCarro = tipoCarro;
+    }
+
+    // Sobrescrita do método calcularAutonomia
+    @Override
+    public double calcularAutonomia() {
+        double tanqueLitros = 50; // tanque de 50 litros
+        double consumoPorLitro = 12; // consumo de 12 km/L
+        return tanqueLitros * consumoPorLitro;
+    }
+}
+
+// Classe Caminhao (herda de Veiculo)
+public class Caminhao extends Veiculo {
+    private double capacidadeCarga; // capacidade de carga em toneladas
+
+    // Construtor
+    public Caminhao(String marca, String modelo, int ano, int capacidadePassageiros, String combustivel, double capacidadeCarga) {
+        super(marca, modelo, ano, capacidadePassageiros, combustivel);
+        this.capacidadeCarga = capacidadeCarga;
+    }
+
+    // Sobrescrita do método calcularAutonomia
+    @Override
+    public double calcularAutonomia() {
+        double tanqueLitros = 300; // tanque de 300 litros
+        double consumoPorLitro = 6; // consumo inicial de 6 km/L
+        double reducaoPorCarga = Math.min(capacidadeCarga * 0.01, 0.25); // redução máxima de 25% por carga
+        consumoPorLitro -= consumoPorLitro * reducaoPorCarga;
+        return tanqueLitros * consumoPorLitro;
+    }
+}
+
+// Classe Onibus (herda de Veiculo)
+public class Onibus extends Veiculo {
+    private int quantidadeEixos;
+
+    // Construtor
+    public Onibus(String marca, String modelo, int ano, int capacidadePassageiros, String combustivel, int quantidadeEixos) {
+        super(marca, modelo, ano, capacidadePassageiros, combustivel);
+        if (quantidadeEixos < 6 || quantidadeEixos > 8) {
+            throw new IllegalArgumentException("A quantidade de eixos deve ser entre 6 e 8.");
+        }
+        this.quantidadeEixos = quantidadeEixos;
+    }
+
+    // Sobrescrita do método calcularAutonomia
+    @Override
+    public double calcularAutonomia() {
+        double tanqueLitros = 200; // tanque de 200 litros
+        double consumoPorLitro = 5; // consumo de 5 km/L
+        return tanqueLitros * consumoPorLitro;
+    }
+}
+
+// Classe CarroEletrico (herda de Carro)
+public class CarroEletrico extends Carro {
+    private double bateriaKWh;
+
+    // Construtor
+    public CarroEletrico(String marca, String modelo, int ano, int capacidadePassageiros, String combustivel, String tipoCarro, double bateriaKWh) {
+        super(marca, modelo, ano, capacidadePassageiros, combustivel, tipoCarro);
+        this.bateriaKWh = bateriaKWh;
+    }
+
+    // Sobrescrita do método calcularAutonomia
+    @Override
+    public double calcularAutonomia() {
+        return bateriaKWh * 5; // consumo de 5 km por kWh
+    }
+}
+
+// Classe CaminhaoRefrigerado (herda de Caminhao)
+public class CaminhaoRefrigerado extends Caminhao {
+    private double temperaturaMinima;
+
+    // Construtor
+    public CaminhaoRefrigerado(String marca, String modelo, int ano, int capacidadePassageiros, String combustivel, double capacidadeCarga, double temperaturaMinima) {
+        super(marca, modelo, ano, capacidadePassageiros, combustivel, capacidadeCarga);
+        this.temperaturaMinima = temperaturaMinima;
+    }
+
+    // Sobrescrita do método calcularAutonomia
+    @Override
+    public double calcularAutonomia() {
+        double autonomia = super.calcularAutonomia();
+        return autonomia * 0.9; // redução de 10% devido ao sistema de refrigeração
+    }
+}
+
